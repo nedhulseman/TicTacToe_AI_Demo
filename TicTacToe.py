@@ -102,6 +102,11 @@ class Manager:
                     self.boards.append(self.board.board.copy())
                     self.turn = "X" if self.turn=="O" else "O"
                     break
+                except AssertionError:
+                    print(move)
+                    print(self.board.open_squares)
+                    print(self.turn)
+                    raise ValueError("EE")
                 except Exception as e:
                     print(e)
                     raise ValueError("EE")
@@ -110,10 +115,12 @@ class Manager:
 
 
 class Player:
-    def __init__(self, engine, bot_gen="Gen1"):
+    def __init__(self, engine, bot_gen="Gen2", side="X"):
         self.engine = engine
+        self.side = side
         if self.engine == "TensorBot":
-            self.bot = torch.load("{}.pt".format(bot_gen))
+            self.bot = torch.load("./Models/{}.pt".format(bot_gen))
+        
 
     def move(self, board):
         if self.engine == "Human":
@@ -140,11 +147,17 @@ class Player:
             _X =  torch.tensor(list(moves_.values()), dtype=torch.float32)
             prob_of_win = self.bot(_X)
         prob_of_win = [i[0] for i in prob_of_win.tolist()]
+        if True:
+            prob_of_win = [i + random.uniform(-.05, .05) for i in prob_of_win]
         index = [i for i,j in enumerate(prob_of_win) if j == max(prob_of_win)][0]
         move_probabilities = dict(zip(list(moves_.keys()), prob_of_win))
         move = list(moves_.keys())[index]
         return move
     def board_to_tensor(self, board):
-        mapper = {None:0, "X":1, "O":-1}
+        if self.side=="X":
+            mapper = {None:0, "X":1, "O":-1}
+        else:
+            mapper = {None:0, "X":-1, "O":1}
+
         return [mapper[i] for i in board.board]
 

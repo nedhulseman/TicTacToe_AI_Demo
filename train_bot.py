@@ -4,13 +4,15 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+'''
 dataset_bot = pd.read_csv("Simulations.csv")
 dataset_hum = pd.read_csv("Simulations_Human.csv")
 df = pd.concat([dataset_bot, dataset_hum])
 for i in range(0, 40):
     dataset = pd.concat([df, dataset_hum])
 dataset = dataset.sample(frac=1, random_state=100)
-
+'''
+dataset = pd.read_csv("./Data/Simulations_TB_1000_w_Random.csv")
 X = dataset[[i for i in dataset.columns if i not in ["Game", "Winner"]]]
 X = X.replace("X",1)
 X = X.replace("O",-1)
@@ -53,6 +55,6 @@ for epoch in range(n_epochs):
         optimizer.step()
     print(f'Finished epoch {epoch}, latest loss {loss}')
 
-torch.save(model, "Gen1.pt")
+torch.save(model, "./Models/Gen2.pt")
 
 

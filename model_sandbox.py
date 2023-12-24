@@ -13,6 +13,7 @@ moves = [
     [1,1,0,-1,0,0,0,0,0],
     [1,1,0,-1,0,0,0,0,-1],
     [1,1,1,-1,0,0,0,0,-1]
+]
 with torch.no_grad():
     _X =  torch.tensor([moves], dtype=torch.float32)
     y_pred = model(_X)
