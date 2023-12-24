@@ -4,11 +4,17 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-dataset = pd.read_csv("Simulations.csv")
+dataset_bot = pd.read_csv("Simulations.csv")
+dataset_hum = pd.read_csv("Simulations_Human.csv")
+df = pd.concat([dataset_bot, dataset_hum])
+for i in range(0, 40):
+    dataset = pd.concat([df, dataset_hum])
+dataset = dataset.sample(frac=1, random_state=100)
+
 X = dataset[[i for i in dataset.columns if i not in ["Game", "Winner"]]]
 X = X.replace("X",1)
-X = X.replace("O",2)
-X = X.fillna(-1)
+X = X.replace("O",-1)
+X = X.fillna(0)
 y = dataset[["Winner"]].fillna("Split")
 y = y.replace("X", 1)
 y = y.replace("O", 0)
@@ -47,6 +53,6 @@ for epoch in range(n_epochs):
         optimizer.step()
     print(f'Finished epoch {epoch}, latest loss {loss}')
 
-with torch.no_grad():
-    _X =  torch.tensor([[1,1,-1,2,-1,-1,-1,-1,-1,2]], dtype=torch.float32)
-    y_pred = model(X[0:5])
+torch.save(model, "Gen1.pt")
+
+
