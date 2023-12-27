@@ -5,14 +5,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-model = torch.load("Gen1.pt")
+model = torch.load("./Models/Gen4.pt")
 
 moves = [
-    [1,0,0,0,0,0,0,0,0],
-    [1,0,0,-1,0,0,0,0,0],
-    [1,1,0,-1,0,0,0,0,0],
-    [1,1,0,-1,0,0,0,0,-1],
-    [1,1,1,-1,0,0,0,0,-1]
+    [ 1, 0,-1,  1,-1, -1,-1,0, 1],
+    [-1, 0, 1, -1, 1,  1, 1,0,-1]
+
 ]
 with torch.no_grad():
     _X =  torch.tensor([moves], dtype=torch.float32)

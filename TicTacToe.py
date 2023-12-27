@@ -81,8 +81,8 @@ class Manager:
     def __init__(self, X, O):
         self.player_modes = ["RandBot", "Human", "TensorBot"]
         self.board = Board()
-        players_objects = {"Human": Player(engine=X), "RandBot": Player(engine=O)}
-        self.players = {"X": Player(engine=X), "O":Player(engine=O)}
+        #players_objects = {"Human": Player(engine=X), "RandBot": Player(engine=O)}
+        self.players = {"X": X, "O":O}
         self.turn = "X"
         self.boards = []
     def play_game(self, verbose=False):
@@ -115,9 +115,11 @@ class Manager:
 
 
 class Player:
-    def __init__(self, engine, bot_gen="Gen2", side="X"):
+    def __init__(self, engine, side, bot_gen="Gen2", randomness=0,mutation=False):
         self.engine = engine
         self.side = side
+        self.randomness = randomness
+        self.mutation = mutation
         if self.engine == "TensorBot":
             self.bot = torch.load("./Models/{}.pt".format(bot_gen))
         
@@ -139,6 +141,12 @@ class Player:
     def tensorbot(self, board):
         tensor = self.board_to_tensor(board)
         moves_ = {}
+        if self.mutation==True:
+            if random.sample(list(range(0,4)), 1)[0]==2:
+                #print("Mutating")
+                move = self.randbot(board)
+                #print(move)
+                return move
         for move in board.open_squares:
             sim_board = tensor.copy()
             sim_board[move] = 1
@@ -147,11 +155,12 @@ class Player:
             _X =  torch.tensor(list(moves_.values()), dtype=torch.float32)
             prob_of_win = self.bot(_X)
         prob_of_win = [i[0] for i in prob_of_win.tolist()]
-        if True:
-            prob_of_win = [i + random.uniform(-.05, .05) for i in prob_of_win]
+        prob_of_win = [i + random.uniform(-1*self.randomness, self.randomness) for i in prob_of_win]
         index = [i for i,j in enumerate(prob_of_win) if j == max(prob_of_win)][0]
         move_probabilities = dict(zip(list(moves_.keys()), prob_of_win))
+        print(move_probabilities)
         move = list(moves_.keys())[index]
+        print(move)
         return move
     def board_to_tensor(self, board):
         if self.side=="X":
