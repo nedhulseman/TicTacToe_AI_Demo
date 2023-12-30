@@ -24,14 +24,14 @@ for bot in tensor_bots:
         tracker["_".join(bot)].append(tensor_wins)
 tracker_df = pd.DataFrame(tracker)
 tracker_df.to_csv("./Assessment/Simulations.csv", index=False)
-
+tracker_df = pd.read_csv("./Assessment/Simulations.csv")
 
 ax = sns.kdeplot(tracker_df, fill=True, alpha=.3)\
     .set(
         xlabel="Number of Wins out of 100 Games", 
         ylabel="Density",
         title="Performance of Neural Networks")
-plt.legend(bbox_to_anchor=(0, 1), loc=2, borderaxespad=0.)
 #ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.save_fig("Win Dist.jpg")
 plt.show()
 
