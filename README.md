@@ -8,5 +8,5 @@
 
 ## Results
 The performance against a RandomBot in Tic Tac Toe improves with each subsequent generation of TensorBot with the final version winning about 99.9% of games against a RandomBot.
-![alt text](./Win_Dists.png?raw=true)
+![alt text](./Win_Dists.jpg?raw=true)
 
